@@ -8,7 +8,7 @@ class Penilaian extends Model
 {
     protected $fillable = [
         'peserta_id',
-        'penilaian',
-        'catatan',
+        'kontestan_id',
+        'skor',
     ];
 }

@@ -10,3 +10,4 @@ Route::get('/penilaian/{hash}', [ExpoController::class, 'penilaian']);
 Route::post('/penilaian', [ExpoController::class, 'submitPenilaian']);
 Route::get('/sertifikat/{hash}', [ExpoController::class, 'sertifikat']);
 Route::get('/admin', [ExpoController::class, 'admin']);
+Route::get('/generateqrcode/{pesertaId}', [ExpoController::class, 'generateQRCode']);
