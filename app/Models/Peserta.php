@@ -8,7 +8,7 @@ class Peserta extends Model
 {
     protected $fillable = [
         'nim',
-        'name',
+        'nama',
         'email',
         'wa',
         'qr_hash'
