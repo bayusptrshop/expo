@@ -8,9 +8,9 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use App\Mail\PesertaEmail; // Impor Mail PesertaEmail
-use Endroid\QrCode\QrCode; // Impor QrCode
-use Endroid\QrCode\Writer\PngWriter; // Impor PngWriter
+use App\Mail\PesertaEmail;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 
 class ImportPesertaFromGoogleSheets extends Command
 {
@@ -21,7 +21,7 @@ class ImportPesertaFromGoogleSheets extends Command
     {
 
         $spreadsheetId = env('GOOGLE_SHEET_ID');
-        $csvUrl = env('GOOGLE_SHEET_URL');
+        $csvUrl = "https://docs.google.com/spreadsheets/d/{$spreadsheetId}/export?format=csv&gid=0";
 
 
         $response = Http::get($csvUrl);
