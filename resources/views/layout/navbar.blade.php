@@ -7,8 +7,8 @@
 
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
-                <li class="nav-item" style="margin-right: 20px">
-                    <a class="nav-link" href="/">Home</a>
+                <li class="nav-item"style="margin-right: 20px">
+                    <a class="nav-link" href="/login">Login</a>
                 </li>
                 <li class="nav-item"style="margin-right: 20px">
                     <a class="nav-link" href="/scan">Scan QR</a>
