@@ -21,14 +21,16 @@ class ExpoController extends Controller
         if (!$peserta) return redirect()->back()->with('error', 'QR tidak valid');
 
         $absen = Absen::firstOrCreate(['peserta_id' => $peserta->id]);
-        $date_time_start = Carbon::parse('2025-07-24 08:00:00');
-        $date_time_end = Carbon::parse('2025-07-24 16:00:00');
+        $date_time_start = Carbon::parse('2025-07-26 08:00:00');
+        $date_time_end = Carbon::parse('2025-07-26 16:00:00');
         $date_time_now = Carbon::now();
 
+        Carbon::setLocale('id');
+
         if ($date_time_now < $date_time_start && !$absen->masuk) {
-            return redirect()->back()->with('error', 'Absensi masuk belum dibuka, dimulai pada ' . Carbon::parse($date_time_start)->format('d-M-Y H:i:s'));
-        } elseif ($date_time_now < $date_time_end && $absen-> masuk && !$absen->pulang) {
-            return redirect()->back()->with('error', 'Absensi pulang belum dibuka, dimulai pada ' . Carbon::parse($date_time_end)->format('d-M-Y H:i:s'));
+            return redirect()->back()->with('error', 'Absensi masuk belum dibuka, dimulai pada ' . $date_time_start->isoFormat('dddd, D MMMM YYYY [Jam] HH:mm'));
+        } elseif ($date_time_now < $date_time_end && $absen->masuk && !$absen->pulang) {
+            return redirect()->back()->with('error', 'Absensi pulang belum dibuka, dimulai pada ' . $date_time_end->isoFormat('dddd, D MMMM YYYY [Jam] HH:mm'));
         } elseif (!$absen->masuk) {
             $absen->masuk = now();
         } elseif (!$absen->pulang) {
@@ -40,9 +42,15 @@ class ExpoController extends Controller
         return redirect()->back()->with('success', 'Absensi berhasil');
     }
 
-    public function sertifikat($hash)
+    public function sertifikat(Request $request, $hash = null)
     {
-        $peserta = Peserta::where('qr_hash', $hash)->firstOrFail();
+        if ($hash) {
+            $peserta = Peserta::where('qr_hash', $hash)->first();
+            if (!$peserta) return redirect()->back()->with('error', 'QR tidak valid');
+        } else {
+            $peserta = Peserta::where('nim', $request->input('nim'))->first();
+            if (!$peserta) return redirect()->back()->with('error', 'NIM tidak valid');
+        }
         $absen = Absen::where('peserta_id', $peserta->id)->first();
 
         $jumlahKontestan = Kontestan::count();
@@ -107,5 +115,10 @@ class ExpoController extends Controller
         $pesertas = Peserta::with(['absen', 'penilaians'])->get();
         $kontestans = Kontestan::all();
         return view('admin', compact('pesertas', 'kontestans'));
+    }
+
+    public function sertifikatView()
+    {
+        return view('sertifikat-view');
     }
 }
