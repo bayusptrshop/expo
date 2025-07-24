@@ -57,8 +57,8 @@ class ExpoController extends Controller
         $jumlahNilaiPeserta = Penilaian::where('peserta_id', $peserta->id)->count();
 
         if ($jumlahKontestan == $jumlahNilaiPeserta && $absen && $absen->masuk && $absen->pulang) {
-            $pdf = PDF::loadView('sertifikat', compact('peserta'));
-            return $pdf->download('sertifikat-' . $peserta->nama . '.pdf');
+            // $pdf = PDF::loadView('sertifikat', compact('peserta'));
+            return view('sertifikat', compact('peserta'));
         } else {
             return redirect()->back()->with('error', 'Belum memenuhi syarat untuk mengunduh sertifikat.');
         }
