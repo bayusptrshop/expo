@@ -1,15 +1,25 @@
 @extends('layout.app')
+
 @section('content')
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg p-4">
-                <h3 class="card-title text-center mb-4">Scan QR Code Peserta</h3>
+            <!-- Card untuk Scan QR -->
+            <div class="card shadow-lg rounded-3">
+                <div class="card-header bg-primary text-white text-center py-4 rounded-3">
+                    <h3 class="card-title mb-0">Scan QR Code Peserta</h3>
+                </div>
                 <div class="card-body text-center">
-                    <button id="startButton" class="btn btn-primary btn-lg mb-3 w-100">Mulai Scan QR</button>
-                    <div id="reader" style="width: 100%; display: none;"></div>
-                    <button id="stopButton" class="btn btn-danger btn-lg mt-3 w-100" style="display: none;">Stop Scan QR</button>
+                    <!-- Tombol Mulai Scan -->
+                    <button id="startButton" class="btn btn-success btn-lg mb-4 w-100">Mulai Scan QR</button>
 
+                    <!-- Tempat untuk menampilkan reader -->
+                    <div id="reader" style="width: 100%; display: none; margin-bottom: 20px;"></div>
+
+                    <!-- Tombol Stop Scan -->
+                    <button id="stopButton" class="btn btn-danger btn-lg w-100" style="display: none;">Stop Scan QR</button>
+
+                    <!-- Form untuk Absensi -->
                     <form id="absenForm" action="/absen" method="POST" style="display: none;">
                         @csrf
                         <input type="hidden" name="qr_hash" id="qr_hash">
@@ -19,6 +29,7 @@
         </div>
     </div>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script>
     const html5QrCode = new Html5Qrcode("reader");
