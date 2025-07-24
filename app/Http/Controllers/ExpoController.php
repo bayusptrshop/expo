@@ -9,6 +9,7 @@ use App\Models\Peserta;
 use Asikam\QrCode\Facades\QrCode;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Carbon\Carbon;
 
 class ExpoController extends Controller
 {
@@ -17,21 +18,26 @@ class ExpoController extends Controller
         $hash = $request->input('qr_hash');
         $peserta = Peserta::where('qr_hash', $hash)->first();
 
-        if (!$peserta) return back()->with('error', 'QR tidak valid');
+        if (!$peserta) return redirect()->back()->with('error', 'QR tidak valid');
 
         $absen = Absen::firstOrCreate(['peserta_id' => $peserta->id]);
+        $date_time_start = Carbon::parse('2025-07-24 08:00:00');
+        $date_time_end = Carbon::parse('2025-07-24 16:00:00');
+        $date_time_now = Carbon::now();
 
-        if (!$absen->masuk) {
+        if ($date_time_now < $date_time_start && !$absen->masuk) {
+            return redirect()->back()->with('error', 'Absensi masuk belum dibuka, dimulai pada ' . Carbon::parse($date_time_start)->format('d-M-Y H:i:s'));
+        } elseif ($date_time_now < $date_time_end && $absen-> masuk && !$absen->pulang) {
+            return redirect()->back()->with('error', 'Absensi pulang belum dibuka, dimulai pada ' . Carbon::parse($date_time_end)->format('d-M-Y H:i:s'));
+        } elseif (!$absen->masuk) {
             $absen->masuk = now();
         } elseif (!$absen->pulang) {
             $absen->pulang = now();
-        } else {
-            return back()->with('error', 'Absensi sudah selesai');
         }
 
         $absen->save();
 
-        return view('scan', ['status' => 'Absensi berhasil']);
+        return redirect()->back()->with('success', 'Absensi berhasil');
     }
 
     public function sertifikat($hash)
@@ -46,7 +52,7 @@ class ExpoController extends Controller
             $pdf = PDF::loadView('sertifikat', compact('peserta'));
             return $pdf->download('sertifikat-' . $peserta->nama . '.pdf');
         } else {
-            return back()->with('error', 'Belum memenuhi syarat untuk mengunduh sertifikat.');
+            return redirect()->back()->with('error', 'Belum memenuhi syarat untuk mengunduh sertifikat.');
         }
     }
 
@@ -64,7 +70,7 @@ class ExpoController extends Controller
     public function generateQRCode($pesertaId)
     {
         $peserta = Peserta::findOrFail($pesertaId);
-        $qrHash = hash_hmac('sha256', $peserta->id, env('QR_SECRET'));
+        $qrHash = hash_hmac('sha256', $peserta->nim, env('QR_SECRET'));
         $fileName = $peserta->id . '.png';
         QrCode::format('png')->size(300)->generate($qrHash, public_path('qrcodes/' . $fileName));
         $peserta->qr_hash = $qrHash;
@@ -94,5 +100,12 @@ class ExpoController extends Controller
         }
 
         return redirect('/')->with('success', 'Penilaian berhasil disimpan!');
+    }
+
+    public function admin()
+    {
+        $pesertas = Peserta::with(['absen', 'penilaians'])->get();
+        $kontestans = Kontestan::all();
+        return view('admin', compact('pesertas', 'kontestans'));
     }
 }

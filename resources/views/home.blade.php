@@ -1,8 +1,9 @@
-@include('layout.navbar')
+@extends('layout.app')
+@section('content')
     <h3>Selamat Datang di Expo</h3>
     <p>Berikut adalah daftar peserta:</p>
 
-    @if(session('error'))
+    @if (session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
@@ -20,11 +21,10 @@
                     <th scope="row">{{ $loop->iteration }}</th>
                     <td>{{ $peserta->nama }}</td>
                     <td>
-                        <a href="/sertifikat/{{ $peserta->qr_hash }}" class="btn btn-primary">Download Sertifikat</a>
+                        <a href="/generateqrcode/{{ $peserta->id }}" class="btn btn-primary btn-sm">Download QR Code</a>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-</body>
-</html>
+@endsection
