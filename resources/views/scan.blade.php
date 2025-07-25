@@ -609,9 +609,6 @@
                         },
                         qrCodeConfig,
                         (decodedText) => {
-                            // Success callback
-                            console.log(`QR Code detected: ${decodedText}`);
-
                             // Show last scanned result
                             // lastScanContent.textContent = decodedText;
                             // lastScan.style.display = "block";
@@ -684,7 +681,7 @@
             }).done((data) => {
                 toastr.success(data.message);
             }).fail((error) => {
-                toastr.error(error.responseJSON.message);
+                // toastr.error(error.responseJSON.message);
             });
         }
     </script>
