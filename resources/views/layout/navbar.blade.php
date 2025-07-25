@@ -57,9 +57,9 @@
 
                 <!-- Right side actions -->
                 <div class="navbar-actions">
-                    <a href="#" class="btn btn-primary">
-                        <i class="bi bi-person-plus"></i>
-                        <span>Daftar</span>
+                    <a href="/login" class="btn btn-primary">
+                     <i class="bi bi-box-arrow-in-right"></i>
+                        <span>Login</span>
                     </a>
                 </div>
             </div>

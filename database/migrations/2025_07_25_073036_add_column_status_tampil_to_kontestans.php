@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('kontestans', function (Blueprint $table) {
-            $table->boolean('status_tampil')->default(false)->after('kategori');
+            $table->boolean('status_tampil')->default(false)->after('tema');
         });
     }
 

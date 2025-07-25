@@ -103,7 +103,7 @@
 
                     @foreach ($kontestans as $kontestan)
                     <div class="mb-4">
-                        <label for="nilai-{{ $kontestan->id }}" class="form-label">{{ $kontestan->nama_kontestan }} ({{ $kontestan->kategori }})</label>
+                        <label for="nilai-{{ $kontestan->id }}" class="form-label">{{ $kontestan->nama_kontestan  ?? }} ({{ $kontestan->kategori }})</label>
                         <select name="nilai[{{ $kontestan->id }}]" id="nilai-{{ $kontestan->id }}" class="form-select" required>
                             <option value="">-- Pilih Nilai --</option>
                             @for ($i = 1; $i <= 5; $i++)
