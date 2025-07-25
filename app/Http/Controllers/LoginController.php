@@ -25,12 +25,11 @@ class LoginController extends Controller
                           ->first();
 
         if (!$peserta) {
-            return redirect()->back()->withErrors(['msg' => 'Invalid email or QR hash.']);
+            return redirect()->back()->with('error', 'Email atau QR tidak valid.');
         }
 
-        // Store peserta id in session for later use
         session(['peserta_id' => $peserta->id]);
 
-        return redirect()->route('form');
+        return redirect()->route('penilaian')->with('success', 'Berhasil login! Silahkan melakukan penilaian.');
     }
 }

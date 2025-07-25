@@ -113,12 +113,78 @@ class ExpoController extends Controller
     public function admin()
     {
         $pesertas = Peserta::with(['absen', 'penilaians'])->get();
+
         $kontestans = Kontestan::all();
-        return view('admin', compact('pesertas', 'kontestans'));
+        $totalKontestan = $kontestans->count();
+        $totalPeserta = $pesertas->count();
+        $pesertaSudahAbsenMasuk = 0;
+        $pesertaSudahAbsenPulang = 0;
+        $pesertaSudahMenilaiSemua = 0;
+        $pesertaSiapCetakSertifikat = 0;
+
+        foreach ($pesertas as $peserta) {
+            if ($peserta->absen && $peserta->absen->masuk) {
+                $pesertaSudahAbsenMasuk++;
+            }
+
+            if ($peserta->absen && $peserta->absen->pulang) {
+                $pesertaSudahAbsenPulang++;
+            }
+            if ($totalKontestan > 0 && $peserta->penilaians->count() === $totalKontestan) {
+                $pesertaSudahMenilaiSemua++;
+            }
+            if (
+                $peserta->absen && $peserta->absen->masuk && $peserta->absen->pulang &&
+                $totalKontestan > 0 && $peserta->penilaians->count() === $totalKontestan
+            ) {
+                $pesertaSiapCetakSertifikat++;
+            }
+        }
+
+        $pesertaSudahAbsen = ($pesertaSudahAbsenMasuk + $pesertaSudahAbsenPulang) / $totalPeserta;
+
+        // Kirim variabel ke view
+        return view('admin', compact(
+            'pesertas',
+            'kontestans',
+            'totalPeserta',
+            'pesertaSudahAbsen',
+            'pesertaSudahMenilaiSemua',
+            'pesertaSiapCetakSertifikat'
+        ));
     }
 
     public function sertifikatView()
     {
         return view('sertifikat-view');
+    }
+
+    public function tampilkanKelompok($id)
+    {
+
+        $kelompok = Kontestan::find($id);
+        if (!$kelompok) {
+            return redirect()->back()->with('error', 'Kelompok tidak ditemukan.');
+        }
+        Kontestan::where('status_tampil', true)->update(['status_tampil' => false]);
+        $kelompok->status_tampil = true;
+        $kelompok->save();
+
+        return redirect()->back()->with('success', 'Kelompok berhasil ditampilkan!');
+    }
+
+    public function listKontestan()
+    {
+        $kontestans = Kontestan::with('penilaians')->get();
+        $total_kontestan = Kontestan::count();
+        $kontestan_selesai = 0;
+        foreach ($kontestans as $kontestan) {
+            if ($kontestan->penilaians->isNotEmpty()) {
+                $kontestan_selesai++;
+            }
+        }
+        $kontestan_belum_selesai = Kontestan::where('status_tampil', false)->count();
+        $total_audiens = Peserta::count();
+        return view('list-kontestan', compact('kontestans', 'total_kontestan', 'kontestan_selesai', 'kontestan_belum_selesai', 'total_audiens'));
     }
 }

@@ -714,15 +714,19 @@
 
             <div class="certificate-footer">
                 <div class="signature-container">
-                    <div class="signature">Bayu Saputra</div>
+                    <div class="signature">Dr. Ahmad Fauzi, M.Kom</div>
                     <div class="signature-line"></div>
-                    <div class="signature-title">CONFERENCE CHAIR</div>
+                    <div class="signature-title">Dekan Fakultas Ilmu Komputer</div>
                 </div>
-
+                <div class="signature-container">
+                    <div class="signature">Jamaludin Indra M.Kom</div>
+                    <div class="signature-line"></div>
+                    <div class="signature-title">Kaprodi Teknik Informatika</div>
+                </div>
                 <div class="signature-container">
                     <div class="signature">Saputra Bayu</div>
                     <div class="signature-line"></div>
-                    <div class="signature-title">TECHNICAL DIRECTOR</div>
+                    <div class="signature-title">Kaprodi Sistem Informasi</div>
                 </div>
             </div>
 

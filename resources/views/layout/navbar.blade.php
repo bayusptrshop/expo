@@ -16,6 +16,9 @@
                 <li class="nav-item" style="margin-right: 20px">
                     <a class="nav-link" href="/admin">Admin</a>
                 </li>
+                <li class="nav-item" style="margin-right: 20px">
+                    <a class="nav-link" href="/kontestan">Kontestan</a>
+                </li>
             </ul>
         </div>
     </div>
