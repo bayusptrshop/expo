@@ -31,6 +31,8 @@ class ExpoController extends Controller
             return redirect()->back()->with('error', 'Absensi masuk belum dibuka, dimulai pada ' . $date_time_start->isoFormat('dddd, D MMMM YYYY [Jam] HH:mm'));
         } elseif ($date_time_now < $date_time_end && $absen->masuk && !$absen->pulang) {
             return redirect()->back()->with('error', 'Absensi pulang belum dibuka, dimulai pada ' . $date_time_end->isoFormat('dddd, D MMMM YYYY [Jam] HH:mm'));
+        } elseif ($absen->masuk && $absen->pulang) {
+            return redirect()->back()->with('error', 'Anda sudah absen masuk dan pulang');
         } elseif (!$absen->masuk) {
             $absen->masuk = now();
         } elseif (!$absen->pulang) {
@@ -186,5 +188,51 @@ class ExpoController extends Controller
         $kontestan_belum_selesai = Kontestan::where('status_tampil', false)->count();
         $total_audiens = Peserta::count();
         return view('list-kontestan', compact('kontestans', 'total_kontestan', 'kontestan_selesai', 'kontestan_belum_selesai', 'total_audiens'));
+    }
+
+    public function absenApi(Request $request)
+    {
+        $hash = $request->input('qr_hash');
+        $peserta = Peserta::where('qr_hash', $hash)->first();
+
+        if (!$peserta) return response()->json([
+            'status' => 'error',
+            'message' => 'QR tidak valid'
+        ], 400);
+
+        $absen = Absen::firstOrCreate(['peserta_id' => $peserta->id]);
+        $date_time_start = Carbon::parse('2025-07-26 08:00:00');
+        $date_time_end = Carbon::parse('2025-07-26 16:00:00');
+        $date_time_now = Carbon::now();
+
+        Carbon::setLocale('id');
+
+        if ($date_time_now < $date_time_start && !$absen->masuk) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Absensi masuk belum dibuka, dimulai pada ' . $date_time_start->isoFormat('dddd, D MMMM YYYY [Jam] HH:mm')
+            ], 400);
+        } elseif ($date_time_now < $date_time_end && $absen->masuk && !$absen->pulang) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Absensi pulang belum dibuka, dimulai pada ' . $date_time_end->isoFormat('dddd, D MMMM YYYY [Jam] HH:mm')
+            ], 400);
+        } elseif ($absen->masuk && $absen->pulang) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Anda sudah absen masuk dan pulang'
+            ], 400);
+        } elseif (!$absen->masuk) {
+            $absen->masuk = now();
+        } elseif (!$absen->pulang) {
+            $absen->pulang = now();
+        }
+
+        $absen->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Absensi berhasil'
+        ], 200);
     }
 }
