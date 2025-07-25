@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('kontestans', function (Blueprint $table) {
             $table->id();
             $table->string('nama_kontestan');
-            $table->string('kategori')->nullable();
+            $table->string('tema')->nullable();
             $table->timestamps();
         });
     }

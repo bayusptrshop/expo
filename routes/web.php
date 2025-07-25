@@ -27,3 +27,6 @@ Route::get('/admin/kelompok/{id}/tampilkan', [ExpoController::class, 'tampilkanK
 
 Route::get('/penilaian', PenilaianComponent::class)->name('penilaian');
 Route::get('/kontestan', [ExpoController::class, 'listKontestan'])->name('kontestan');
+
+
+Route::post('/admin/import/kontestan', [ExpoController::class, 'import'])->name('admin.import.kontestan');

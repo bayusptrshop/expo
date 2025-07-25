@@ -11,6 +11,11 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
 
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\KontestanImport;
+
+use Maatwebsite\Excel\Validators\ValidationException;
+
 class ExpoController extends Controller
 {
     public function absen(Request $request)
@@ -18,7 +23,8 @@ class ExpoController extends Controller
         $hash = $request->input('qr_hash');
         $peserta = Peserta::where('qr_hash', $hash)->first();
 
-        if (!$peserta) return redirect()->back()->with('error', 'QR tidak valid');
+        if (!$peserta)
+            return redirect()->back()->with('error', 'QR tidak valid');
 
         $absen = Absen::firstOrCreate(['peserta_id' => $peserta->id]);
         $date_time_start = Carbon::parse('2025-07-26 08:00:00');
@@ -48,10 +54,12 @@ class ExpoController extends Controller
     {
         if ($hash) {
             $peserta = Peserta::where('qr_hash', $hash)->first();
-            if (!$peserta) return redirect()->back()->with('error', 'QR tidak valid');
+            if (!$peserta)
+                return redirect()->back()->with('error', 'QR tidak valid');
         } else {
             $peserta = Peserta::where('nim', $request->input('nim'))->first();
-            if (!$peserta) return redirect()->back()->with('error', 'NIM tidak valid');
+            if (!$peserta)
+                return redirect()->back()->with('error', 'NIM tidak valid');
         }
         $absen = Absen::where('peserta_id', $peserta->id)->first();
 
@@ -195,10 +203,11 @@ class ExpoController extends Controller
         $hash = $request->input('qr_hash');
         $peserta = Peserta::where('qr_hash', $hash)->first();
 
-        if (!$peserta) return response()->json([
-            'status' => 'error',
-            'message' => 'QR tidak valid'
-        ], 400);
+        if (!$peserta)
+            return response()->json([
+                'status' => 'error',
+                'message' => 'QR tidak valid'
+            ], 400);
 
         $absen = Absen::firstOrCreate(['peserta_id' => $peserta->id]);
         $date_time_start = Carbon::parse('2025-07-26 08:00:00');
@@ -235,4 +244,34 @@ class ExpoController extends Controller
             'message' => 'Absensi berhasil'
         ], 200);
     }
+
+    // import
+
+
+public function import(Request $request)
+{
+    $request->validate([
+        'file' => 'required|mimes:xlsx,xls'
+    ]);
+
+    try {
+        Excel::import(new KontestanImport, $request->file('file'));
+        return redirect()->back()->with('success', 'Data kontestan berhasil diimport!');
+    } catch (ValidationException $e) {
+        $failures = $e->failures();
+        $errorMessages = [];
+
+        foreach ($failures as $failure) {
+            $errorMessages[] = "Baris {$failure->row()}: {$failure->errors()[0]}";
+        }
+
+        return redirect()->back()
+            ->with('errors', $errorMessages)
+            ->with('error', 'Terjadi kesalahan dalam import data');
+    } catch (\Exception $e) {
+        return redirect()->back()
+            ->with('error', 'Error: ' . $e->getMessage());
+    }
+}
+
 }

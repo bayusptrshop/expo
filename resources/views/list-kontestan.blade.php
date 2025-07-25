@@ -375,6 +375,9 @@
                             <i class="bi bi-trophy-fill me-2 fs-4"></i>
                             <h5 class="mb-0">Data Kontestan</h5>
                         </div>
+                        <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#importModal">
+                            <i class="bi bi-upload me-2"></i>Import Kontestan
+                        </button>
                         {{-- <button class="btn btn-light">
                             <i class="bi bi-plus-circle me-2"></i>Tambah Kontestan
                         </button> --}}
@@ -391,6 +394,7 @@
                                         <th>Jumlah Audiens</th>
                                         <th>Total Skor</th>
                                         <th>Rata-rata</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -429,7 +433,21 @@
                                                 <span class="score-pill">{{ $item->penilaians->sum('skor') }}</span>
                                             </td>
                                             <td>
-                                                <span class="score-pill">{{ $item->penilaians->avg('skor') ?? 0 }}</span>
+                                                <span
+                                                    class="score-pill">{{ $item->penilaians->avg('skor') ?? 0 }}</span>
+                                            </td>
+                                            <td>
+                                                @if ($item->status_tampil)
+                                                    <button class="btn btn-sm btn-success" disabled>
+                                                        <i class="bi bi-eye-fill"></i> Sedang Tampil
+                                                    </button>
+                                                @else
+                                                    <a href="{{ route('admin.tampilkanKelompok', $item->id) }}"
+                                                        class="btn btn-sm btn-outline-primary"
+                                                        onclick="return confirm('Tampilkan kelompok ini?')">
+                                                        <i class="bi bi-eye"></i> Tampilkan
+                                                    </a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -462,7 +480,43 @@
             </div>
         </div>
     </div>
-
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="importModalLabel">Import Data Kontestan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form action="{{ route('admin.import.kontestan') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Pilih File Excel</label>
+                            <input class="form-control" type="file" id="file" name="file"
+                                accept=".xlsx, .xls" required>
+                            <div class="form-text">Format file harus Excel (.xlsx atau .xls)</div>
+                        </div>
+                        <div class="alert alert-info">
+                            <h6 class="fw-bold">Petunjuk:</h6>
+                            <ol class="mb-0">
+                                <li>Pastikan file Excel memiliki kolom: <code>nama_kontestan</code> dan
+                                    <code>tema</code></li>
+                                <li>Status tampil akan otomatis di-set ke "Belum Tampil"</li>
+                                <li>Unduh template <a href="{{ asset('excel/format-kelompok.xlsx') }}"
+                                        download>di sini</a></li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap 5 JS Bundle with Popper -->
