@@ -63,26 +63,27 @@ class ImportPesertaFromGoogleSheets extends Command
             }
 
             try {
-                // Simpan peserta dan buat QR hash
-                $peserta = Peserta::updateOrCreate(
-                    ['nim' => $nim],
-                    [
-                        'nama' => strtoupper(trim($nama)),
-                        'email' => !empty($email) ? trim($email) : null,
-                        'wa' => $wa,
-                        'qr_hash' => $this->generateQRCodeID($nim),
-                    ]
-                );
+                $peserta = Peserta::where('nim', $nim)->first();
 
-                // Generate QR Code untuk peserta
+                if ($peserta) {
+                    $this->info("Peserta dengan NIM {$nim} sudah ada, dilewati");
+                    continue;
+                }
+
+                $peserta = Peserta::create([
+                    'nim' => $nim,
+                    'nama' => strtoupper(trim($nama)),
+                    'email' => !empty($email) ? trim($email) : null,
+                    'wa' => $wa,
+                    'qr_hash' => $this->generateQRCodeID($nim),
+                ]);
+
                 $this->generateQRCode($peserta);
 
-                // Kirimkan email hanya untuk data baru yang berhasil disimpan
-                if ($peserta->wasRecentlyCreated) {
+                if (!empty($peserta->email)) {
                     Mail::to($peserta->email)->send(new PesertaEmail($peserta));
                     $this->info("Berhasil mengirimkan email ke: $peserta->email");
-
-                    sleep(5); // delay 5 detik buat hindar rate limit
+                    sleep(5);
                 }
 
                 $count++;

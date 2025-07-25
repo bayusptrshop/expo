@@ -37,7 +37,7 @@
                         </div>
                         <div class="d-flex align-items-center mt-3">
                             <span class="fw-bold me-2">Nama Kontestan:</span>
-                            <span class="badge badge-contestant">{{ $kelompok->nama_kontestan }}</span>
+                            <span class="badge badge-contestant">{{ $kelompok->nama_kontestan ?? '-'}}</span>
                         </div>
                     </div>
 
