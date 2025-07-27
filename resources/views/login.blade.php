@@ -90,7 +90,7 @@
                                                     <i class="bi bi-qr-code"></i>
                                                 </span>
                                                 <input type="text" class="form-control" id="qr_hash" name="qr_hash"
-                                                    placeholder="Enter your QR hash" required>
+                                                    placeholder="Enter your ID Code" required>
                                             </div>
                                             @error('qr_hash')
                                                 <div class="text-danger mt-1 small">{{ $message }}</div>

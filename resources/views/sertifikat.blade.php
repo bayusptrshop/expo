@@ -154,6 +154,7 @@
             text-align: center;
             margin-bottom: 30px;
             position: relative;
+            margin-top: -50px;
         }
 
         .certificate-title {
@@ -264,8 +265,8 @@
 
         .certificate-seal {
             position: absolute;
-            bottom: 40px;
-            right: 60px;
+            bottom: 10px;
+            right: 20px;
             width: 120px;
             height: 120px;
             display: flex;
@@ -372,8 +373,8 @@
         }
 
         .tech-icon {
-            width: 40px;
-            height: 40px;
+            width: 70px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -384,6 +385,13 @@
             position: relative;
             overflow: hidden;
         }
+
+        .tech-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
 
         .tech-icon::after {
             content: '';
@@ -653,51 +661,26 @@
             </div>
 
             <div class="border-effect"></div>
-            <div class="hologram"></div>
+            {{-- <div class="hologram"></div> --}}
 
             <div class="certificate-header">
                 <h1 class="certificate-title">TechnoVision 2025</h1>
                 <h2 class="certificate-subtitle">Innovation Beyond Code</h2>
 
-                {{-- <div class="tech-icon-container">
+                <div class="tech-icon-container">
                     <div class="tech-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            viewBox="0 0 16 16">
-                            <path
-                                d="M5 0a.5.5 0 0 1 .5.5V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2A2.5 2.5 0 0 1 11 4.5h1.5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5H5V2.5A.5.5 0 0 1 5 2V.5A.5.5 0 0 1 5 0M8.5 12a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z" />
-                        </svg>
+                        <img src="{{ asset('logo-dikti.png') }}" alt="tes">
                     </div>
                     <div class="tech-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            viewBox="0 0 16 16">
-                            <path
-                                d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                            <path
-                                d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
-                        </svg>
+                        <img src="{{ asset('img/logo-ubp.png') }}" alt="">
                     </div>
                     <div class="tech-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            viewBox="0 0 16 16">
-                            <path
-                                d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z" />
-                        </svg>
+                        <img src="{{ asset('img/logo-expo.jpg') }}" alt="">
                     </div>
                     <div class="tech-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            viewBox="0 0 16 16">
-                            <path
-                                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2" />
-                        </svg>
+                        <img src="{{ asset('logo-fik.png') }}" alt="">
                     </div>
-                    <div class="tech-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            viewBox="0 0 16 16">
-                            <path
-                                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855q-.215.403-.395.872c.705.157 1.472.257 2.282.287zM4.249 3.539q.214-.577.481-1.078a7 7 0 0 1 .597-.933A7 7 0 0 0 3.051 3.05q.544.277 1.198.49zM3.509 7.5c.036-1.07.188-2.087.436-3.008a9 9 0 0 1-1.565-.667A6.96 6.96 0 0 0 1.018 7.5zm1.4-2.741a12.3 12.3 0 0 0-.4 2.741H7.5V5.091c-.91-.03-1.783-.145-2.591-.332M8.5 5.09V7.5h2.99a12.3 12.3 0 0 0-.399-2.741c-.808.187-1.681.301-2.591.332zM4.51 8.5c.035.987.176 1.914.399 2.741A13.6 13.6 0 0 1 7.5 10.91V8.5zm3.99 0v2.409c.91.03 1.783.145 2.591.332.223-.827.364-1.754.4-2.741zm-3.282 3.696q.18.469.395.872c.552 1.035 1.218 1.65 1.887 1.855V11.91c-.81.03-1.577.13-2.282.287zm.11 2.276a7 7 0 0 1-.598-.933 9 9 0 0 1-.481-1.079 8.4 8.4 0 0 0-1.198.49 7 7 0 0 0 2.276 1.522zm-1.383-2.964A13.4 13.4 0 0 1 3.508 8.5h-2.49a6.96 6.96 0 0 0 1.362 3.675c.47-.258.995-.482 1.565-.667m6.728 2.964a7 7 0 0 0 2.275-1.521 8.4 8.4 0 0 0-1.197-.49 9 9 0 0 1-.481 1.078 7 7 0 0 1-.597.933M8.5 11.909v3.014c.67-.204 1.335-.82 1.887-1.855q.216-.403.395-.872A12.6 12.6 0 0 0 8.5 11.91zm3.555-.401c.57.185 1.095.409 1.565.667A6.96 6.96 0 0 0 14.982 8.5h-2.49a13.4 13.4 0 0 1-.437 3.008M14.982 7.5a6.96 6.96 0 0 0-1.362-3.675c-.47.258-.995.482-1.565.667.248.92.4 1.938.437 3.008zM11.27 2.461q.266.502.482 1.078a8.4 8.4 0 0 0 1.196-.49 7 7 0 0 0-2.275-1.52c.218.283.418.597.597.932m-.488 1.343a8 8 0 0 0-.395-.872C9.835 1.897 9.17 1.282 8.5 1.077V4.09c.81-.03 1.577-.13 2.282-.287z" />
-                        </svg>
-                    </div>
-                </div> --}}
+                </div>
             </div>
 
             <div class="certificate-body">
@@ -706,30 +689,34 @@
                     <h3 class="certificate-recipient">{{ $peserta->nama }}</h3>
                 </div>
                 <p class="certificate-text">
-                    has successfully participated in the TechnoVision 2025 conference and demonstrated
-                    exceptional knowledge and innovation in the field of emerging technologies,
-                    contributing valuable insights to the future of digital transformation.
+                    has successfully contributed as an evaluator in the TechnoVision 2025 Expo, organized by the Faculty of <b>Computer Science</b> at <b>Universitas Buana Perjuangan Karawang</b>, held on <b>Saturday, July 26, 2025.</b> Their participation in assessing the contestants demonstrated a strong commitment to academic excellence and the advancement of innovation in the field of emerging technologies.
                 </p>
             </div>
-
             <div class="certificate-footer">
                 <div class="signature-container">
+                    <div id="qrcode-dekan" class="d-flex justify-content-center mb-2"></div>
                     <div class="signature">Dr. Ahmad Fauzi, M.Kom</div>
                     <div class="signature-line"></div>
                     <div class="signature-title">Dekan Fakultas Ilmu Komputer</div>
                 </div>
                 <div class="signature-container">
+                    <div id="qrcode-kaprodi-if" class="d-flex justify-content-center mb-2"></div>
                     <div class="signature">Jamaludin Indra M.Kom</div>
                     <div class="signature-line"></div>
                     <div class="signature-title">Kaprodi Teknik Informatika</div>
                 </div>
                 <div class="signature-container">
-                    <div class="signature">Saputra Bayu</div>
+                    <div id="qrcode-kaprodi-si" class="d-flex justify-content-center mb-2"></div>
+                    <div class="signature">Tukino, MMSI</div>
                     <div class="signature-line"></div>
                     <div class="signature-title">Kaprodi Sistem Informasi</div>
                 </div>
             </div>
 
+            {{-- <div class="certificate-date">
+                <div class="date-text">JULY 26, 2025</div>
+                <div class="location-text">KARAWANG, INDONESIA</div>
+            </div> --}}
             <div class="certificate-seal">
                 <div class="seal-circle">
                     <div class="seal-inner">
@@ -741,18 +728,14 @@
                     </div>
                 </div>
             </div>
-
-            <div class="certificate-date">
-                <div class="date-text">JULY 26, 2025</div>
-                <div class="location-text">KARAWANG, INDONESIA</div>
-            </div>
-
-            <div class="certificate-id">CERT ID: TV2025-8675309</div>
+            {{-- <div class="certificate-id">CERT ID: TV2025-8675309</div> --}}
         </div>
     </div>
 
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 
     <!-- Certificate Customization Script -->
     <script>
@@ -851,6 +834,40 @@
             }
         })();
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const pesertaId = "{{ url('/verify-sertifikat/' . $peserta->id) }}";
+
+            new QRCode(document.getElementById("qrcode-dekan"), {
+                text: pesertaId,
+                width: 60,
+                height: 60,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            new QRCode(document.getElementById("qrcode-kaprodi-if"), {
+                text: pesertaId,
+                width: 60,
+                height: 60,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            new QRCode(document.getElementById("qrcode-kaprodi-si"), {
+                text: pesertaId,
+                width: 60,
+                height: 60,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        });
+    </script>
+
+
 </body>
 
 </html>

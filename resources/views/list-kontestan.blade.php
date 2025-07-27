@@ -390,6 +390,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Kelompok</th>
+                                         <th>tema</th>
                                         <th>Status Tampil</th>
                                         <th>Jumlah Audiens</th>
                                         <th>Total Skor</th>
@@ -402,6 +403,7 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->nama_kontestan }}</td>
+                                            <td>{{ $item->tema }}</td>
                                             <td>
                                                 @php
                                                     $statusText = '';
@@ -434,7 +436,7 @@
                                             </td>
                                             <td>
                                                 <span
-                                                    class="score-pill">{{ $item->penilaians->avg('skor') ?? 0 }}</span>
+                                                    class="score-pill">{{ $item->penilaians->avg('skor') ? number_format($item->penilaians->avg('skor'),2) : 0 }}</span>
                                             </td>
                                             <td>
                                                 @if ($item->status_tampil)

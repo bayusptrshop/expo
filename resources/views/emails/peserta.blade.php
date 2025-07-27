@@ -12,7 +12,7 @@
 
     <p>ID Code kamu adalah: <strong>{{ $peserta->qr_hash }}</strong>, sedangkan QR Code kamu dilampirkan pada email ini.</p>
 
-    {{-- <p>QR Code dan ID Code tersebut nantinya akan digunakan juga dalam pengambilan sertifikat digital pada link web: {{ config('app.url') }}/certificate/{{ $peserta->qr_hash }}, maka jaga baik-baik pesan email ini.</p> --}}
+    <p>QR Code dan ID Code tersebut nantinya akan digunakan juga dalam pengambilan sertifikat digital pada link web: {{ config('app.url') }}, maka jaga baik-baik pesan email ini.</p>
 
     <p>Terima kasih & Salam Hormat,<br>
     Sistem Broadcast Panitia Acara FIK UBP Karawang</p>

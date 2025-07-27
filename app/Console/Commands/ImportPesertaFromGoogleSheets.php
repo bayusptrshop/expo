@@ -20,8 +20,9 @@ class ImportPesertaFromGoogleSheets extends Command
     public function handle()
     {
 
-        $spreadsheetId = env('GOOGLE_SHEET_ID');
-        $csvUrl = "https://docs.google.com/spreadsheets/d/{$spreadsheetId}/export?format=csv&gid=0";
+      $spreadsheetId = "1DJ55pfX13929wE37CuEGs9zfY7RsnbM6blAoXQvmRZY";
+$gid = "835363219"; // ID tab sheet Anda
+$csvUrl = "https://docs.google.com/spreadsheets/d/{$spreadsheetId}/export?format=csv&gid={$gid}";
 
 
         $response = Http::get($csvUrl);

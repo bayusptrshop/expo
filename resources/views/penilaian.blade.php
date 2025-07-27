@@ -29,7 +29,7 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 600px; /* Lebar maksimal card */
-            margin-top: 50px;
+            margin-top: 10px;
         }
 
         .card-header-modern {
@@ -116,7 +116,7 @@
                     @endforeach
 
                     <!-- Tombol Submit -->
-                    <div class="d-grid mt-4">
+                    <div class="d-grid mt-2">
                         <button type="submit" class="btn btn-success">Simpan Penilaian</button>
                     </div>
                 </form>

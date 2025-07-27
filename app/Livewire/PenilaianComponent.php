@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Kontestan;
 use App\Models\Penilaian;
 use Livewire\Component;
+use App\Models\Peserta;
 
 class PenilaianComponent extends Component
 {
@@ -17,6 +18,8 @@ class PenilaianComponent extends Component
 
     // ID audiens (peserta yang sedang menilai)
     public $audiens_id;
+    
+    public $audiens;
 
     // Aturan validasi
     // 'penilaians.*' akan memvalidasi setiap item dalam array $penilaians
@@ -27,9 +30,10 @@ class PenilaianComponent extends Component
     public function mount()
     {
         $this->audiens_id = session('peserta_id');
-
+        $this->audiens = Peserta::find($this->audiens_id);
+        
         // Ambil semua kontestan yang sedang tampil
-        $this->kelompok = Kontestan::where('status_tampil', true)->get();
+        $this->kelompok = Kontestan::where('status_tampil', true)->orderBy('updated_at', 'desc')->get();
 
         // Inisialisasi array $penilaians dengan skor yang sudah ada
         // agar select box menampilkan nilai yang sudah tersimpan

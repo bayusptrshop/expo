@@ -592,7 +592,9 @@
 
                 scannerStatus.innerHTML = statusHTML;
             }
-
+            
+            let lastScannedQrHash = null;
+            
             // Start scanning
             startButton.addEventListener("click", async () => {
                 startButton.style.display = "none";
@@ -609,13 +611,12 @@
                         },
                         qrCodeConfig,
                         (decodedText) => {
-                            // Show last scanned result
-                            // lastScanContent.textContent = decodedText;
-                            // lastScan.style.display = "block";
-
-                            // Submit form
-                            document.getElementById('qr_hash').value = decodedText;
-                            saveToDatabase();
+                            if (lastScannedQrHash !== decodedText) {
+                                // Jika berbeda, lanjutkan proses
+                                document.getElementById('qr_hash').value = decodedText; // Update nilai input
+                                saveToDatabase(); // Panggil fungsi untuk menyimpan ke database
+                                lastScannedQrHash = decodedText; // Update lastScannedQrHash setelah berhasil disimpan
+                            }
 
                             // Reset the scanning overlay for the next scan
                             scanOverlay.style.display = "block"; // Keep showing scan overlay
@@ -671,7 +672,7 @@
             updateStatus('offline');
         });
 
-        function saveToDatabase() {
+            function saveToDatabase() {
             $.ajax({
                 url: "/api/absen",
                 method: "POST",
@@ -681,7 +682,7 @@
             }).done((data) => {
                 toastr.success(data.message);
             }).fail((error) => {
-                // toastr.error(error.responseJSON.message);
+                toastr.error(error.responseJSON.message);
             });
         }
     </script>

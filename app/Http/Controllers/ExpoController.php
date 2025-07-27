@@ -28,7 +28,7 @@ class ExpoController extends Controller
 
         $absen = Absen::firstOrCreate(['peserta_id' => $peserta->id]);
         $date_time_start = Carbon::parse('2025-07-26 08:00:00');
-        $date_time_end = Carbon::parse('2025-07-26 16:00:00');
+        $date_time_end = Carbon::parse('2025-07-26 21:00:00');
         $date_time_now = Carbon::now();
 
         Carbon::setLocale('id');
@@ -50,30 +50,21 @@ class ExpoController extends Controller
         return redirect()->back()->with('success', 'Absensi berhasil');
     }
 
-    public function sertifikat(Request $request, $hash = null)
-    {
-        if ($hash) {
-            $peserta = Peserta::where('qr_hash', $hash)->first();
-            if (!$peserta)
-                return redirect()->back()->with('error', 'QR tidak valid');
-        } else {
-            $peserta = Peserta::where('nim', $request->input('nim'))->first();
-            if (!$peserta)
-                return redirect()->back()->with('error', 'NIM tidak valid');
-        }
-        $absen = Absen::where('peserta_id', $peserta->id)->first();
-
-        $jumlahKontestan = Kontestan::count();
-        $jumlahNilaiPeserta = Penilaian::where('peserta_id', $peserta->id)->count();
-
-        if ($jumlahKontestan == $jumlahNilaiPeserta && $absen && $absen->masuk && $absen->pulang) {
-            // $pdf = PDF::loadView('sertifikat', compact('peserta'));
-            return view('sertifikat', compact('peserta'));
-        } else {
-            return redirect()->back()->with('error', 'Belum memenuhi syarat untuk mengunduh sertifikat.');
-        }
+   public function sertifikat(Request $request, $hash = null)
+{
+    if ($hash) {
+        $peserta = Peserta::where('qr_hash', $hash)->first();
+        if (!$peserta)
+            return redirect()->back()->with('error', 'QR tidak valid');
+    } else {
+        $peserta = Peserta::where('nim', $request->input('nim'))->first();
+        if (!$peserta)
+            return redirect()->back()->with('error', 'NIM tidak valid');
     }
 
+    // Langsung return view sertifikat tanpa validasi
+    return view('sertifikat', compact('peserta'));
+}
     public function home()
     {
         $pesertas = Peserta::all();
@@ -151,7 +142,7 @@ class ExpoController extends Controller
             }
         }
 
-        $pesertaSudahAbsen = ($pesertaSudahAbsenMasuk + $pesertaSudahAbsenPulang) / $totalPeserta;
+        $pesertaSudahAbsen = $pesertaSudahAbsenMasuk > 0 && $pesertaSudahAbsenPulang > 0 ? ($pesertaSudahAbsenMasuk + $pesertaSudahAbsenPulang) / $totalPeserta : 0;
 
         // Kirim variabel ke view
         return view('admin', compact(
@@ -176,7 +167,7 @@ class ExpoController extends Controller
         if (!$kelompok) {
             return redirect()->back()->with('error', 'Kelompok tidak ditemukan.');
         }
-        Kontestan::where('status_tampil', true)->update(['status_tampil' => false]);
+        // Kontestan::where('status_tampil', true)->update(['status_tampil' => false]);
         $kelompok->status_tampil = true;
         $kelompok->save();
 
@@ -197,81 +188,145 @@ class ExpoController extends Controller
         $total_audiens = Peserta::count();
         return view('list-kontestan', compact('kontestans', 'total_kontestan', 'kontestan_selesai', 'kontestan_belum_selesai', 'total_audiens'));
     }
-
     public function absenApi(Request $request)
     {
         $hash = $request->input('qr_hash');
         $peserta = Peserta::where('qr_hash', $hash)->first();
 
-        if (!$peserta)
+        if (!$peserta) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'QR tidak valid'
             ], 400);
-
-        $absen = Absen::firstOrCreate(['peserta_id' => $peserta->id]);
-        $date_time_start = Carbon::parse('2025-07-26 08:00:00');
-        $date_time_end = Carbon::parse('2025-07-26 16:00:00');
-        $date_time_now = Carbon::now();
-
-        Carbon::setLocale('id');
-
-        if ($date_time_now < $date_time_start && !$absen->masuk) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Absensi masuk belum dibuka, dimulai pada ' . $date_time_start->isoFormat('dddd, D MMMM YYYY [Jam] HH:mm')
-            ], 400);
-        } elseif ($date_time_now < $date_time_end && $absen->masuk && !$absen->pulang) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Absensi pulang belum dibuka, dimulai pada ' . $date_time_end->isoFormat('dddd, D MMMM YYYY [Jam] HH:mm')
-            ], 400);
-        } elseif ($absen->masuk && $absen->pulang) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Anda sudah absen masuk dan pulang'
-            ], 400);
-        } elseif (!$absen->masuk) {
-            $absen->masuk = now();
-        } elseif (!$absen->pulang) {
-            $absen->pulang = now();
         }
 
-        $absen->save();
+        date_default_timezone_set('Asia/Jakarta');
+        Carbon::setLocale('id');
 
+        $now = Carbon::now();
+        $today = $now->format('Y-m-d');
+
+        // Cari absen hari ini saja
+        $absen = Absen::where('peserta_id', $peserta->id)
+            ->whereDate('created_at', $today)
+            ->first();
+
+        $date_time_start = Carbon::parse('2025-07-26 08:00:00');
+        $date_time_end = Carbon::parse('2025-07-26 20:30:00');
+
+        if ($now < $date_time_start) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Absensi belum dibuka, dimulai pada ' . $date_time_start->isoFormat('dddd, D MMMM YYYY [Jam] HH:mm')
+            ], 400);
+        }
+
+        // Jika belum ada record absen
+        if (!$absen) {
+            // Jika sudah lewat waktu absen pulang
+            if ($now > $date_time_end) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Waktu absen sudah berakhir'
+                ], 400);
+            }
+
+            // Buat record absen masuk
+            $absen = Absen::create([
+                'peserta_id' => $peserta->id,
+                'masuk' => $now,
+                'pulang' => null
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Absensi masuk berhasil'
+            ], 200);
+        }
+
+        // Sudah absen masuk tapi belum pulang
+        if ($absen->masuk && !$absen->pulang) {
+            // Cek apakah sudah waktunya absen pulang
+            if ($now < $date_time_end) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Absensi pulang belum dibuka, dimulai pada ' . $date_time_end->isoFormat('dddd, D MMMM YYYY [Jam] HH:mm')
+                ], 400);
+            }
+
+            // Update absen pulang
+            $absen->pulang = $now;
+            $absen->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Absensi pulang berhasil'
+            ], 200);
+        }
+
+        // Sudah absen masuk dan pulang
         return response()->json([
-            'status' => 'success',
-            'message' => 'Absensi berhasil'
-        ], 200);
+            'status' => 'error',
+            'message' => 'Anda sudah absen masuk dan pulang hari ini'
+        ], 400);
     }
-
     // import
 
 
-public function import(Request $request)
-{
-    $request->validate([
-        'file' => 'required|mimes:xlsx,xls'
-    ]);
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
 
-    try {
-        Excel::import(new KontestanImport, $request->file('file'));
-        return redirect()->back()->with('success', 'Data kontestan berhasil diimport!');
-    } catch (ValidationException $e) {
-        $failures = $e->failures();
-        $errorMessages = [];
+        try {
+            Excel::import(new KontestanImport, $request->file('file'));
+            return redirect()->back()->with('success', 'Data kontestan berhasil diimport!');
+        } catch (ValidationException $e) {
+            $failures = $e->failures();
+            $errorMessages = [];
 
-        foreach ($failures as $failure) {
-            $errorMessages[] = "Baris {$failure->row()}: {$failure->errors()[0]}";
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Baris {$failure->row()}: {$failure->errors()[0]}";
+            }
+
+            return redirect()->back()
+                ->with('errors', $errorMessages)
+                ->with('error', 'Terjadi kesalahan dalam import data');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Error: ' . $e->getMessage());
         }
-
-        return redirect()->back()
-            ->with('errors', $errorMessages)
-            ->with('error', 'Terjadi kesalahan dalam import data');
-    } catch (\Exception $e) {
-        return redirect()->back()
-            ->with('error', 'Error: ' . $e->getMessage());
     }
+    
+    public function verifySertifikat(Request $request, $id = null)
+{
+    if (!$id) {
+        return redirect()->back()->with('error', 'Hash tidak valid');
+    }
+
+    $peserta = Peserta::where('id', $id)->first();
+    
+    if (!$peserta) {
+        return view('verify_sertifikat', [
+            'valid' => false,
+            'message' => 'Sertifikat tidak valid - Peserta tidak ditemukan'
+        ]);
+    }
+
+    $absen = Absen::where('peserta_id', $peserta->id)->first();
+    $jumlahKontestan = Kontestan::count();
+    $jumlahNilaiPeserta = Penilaian::where('peserta_id', $peserta->id)->count();
+
+    $isEligible = ($jumlahKontestan == $jumlahNilaiPeserta && $absen && $absen->masuk && $absen->pulang);
+
+    return view('verify_sertifikat', [
+        'valid' => $isEligible,
+        'peserta' => $peserta,
+        'message' => $isEligible 
+            ? 'Sertifikat ini valid dan resmi' 
+            : 'Sertifikat tidak memenuhi syarat kelengkapan'
+    ]);
 }
 
 }

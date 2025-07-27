@@ -1,8 +1,15 @@
-<div class="container" style="margin-top: 23rem;">
+<div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-7 col-md-10 col-sm-12">
-            <div class="text-center mb-4">
-                <h2 class="page-title fw-bold text-primary">Penilaian Kontestan</h2>
+            <!-- Modern Welcome Section -->
+            <div class="welcome-section text-center my-4">
+                <div class="welcome-text">
+                    <h1 class="welcome-title">Penilaian Kontestan</h1>
+                    <div class="name-card">
+                        <h2 class="welcome-subtitle">Halo, {{ $audiens->nama }}</h2>
+                        <span class="welcome-emoji">👋</span>
+                    </div>
+                </div>
             </div>
 
             @if (session()->has('success'))
@@ -31,11 +38,6 @@
                     <div class="card-body p-4">
                         <div id="alert-container-{{ $item->id }}" class="mb-3">
                         </div>
-                        <div class="d-flex align-items-center mt-3">
-                            <span class="fw-bold me-2">Nama Kontestan:</span>
-                            <span class="badge badge-contestant">{{ $kelompok->nama_kontestan ?? '-'}}</span>
-                        </div>
-                    </div>
 
                         <div class="contestant-info mb-4">
                             <div class="d-flex align-items-center mb-2">
@@ -54,22 +56,22 @@
                             {{-- <input type="hidden" wire:model="kontestan_id" value="{{ $item->id }}"> --}}
 
                             <div class="mb-4">
-                                <label for="skor-{{ $item->id }}" class="form-label fw-bold d-flex align-items-center">
+                                <label for="skor-{{ $item->id }}"
+                                    class="form-label fw-bold d-flex align-items-center">
                                     <i class="bi bi-star-fill text-warning me-2"></i>
                                     Skor Penilaian:
                                 </label>
                                 <div class="">
                                     {{-- wire:model.live digunakan untuk update skor secara real-time di frontend --}}
-                                    <select class="form-select form-control-lg fw-bold"
-                                        id="skor-{{ $item->id }}"
-                                        wire:model.live="penilaians.{{ $item->id }}" {{-- Binding ke array penilaians --}}
-                                        required>
+                                    <select class="form-select form-control-lg fw-bold" id="skor-{{ $item->id }}"
+                                        wire:model.live="penilaians.{{ $item->id }}" {{-- Binding ke array penilaians --}} required>
                                         <option value="">-- Pilih Nilai --</option>
                                         <option value="100">Hijau (100)</option>
                                         <option value="75">Kuning (75)</option>
                                         <option value="40">Merah (40)</option>
                                     </select>
-                                    @error('penilaians.' . $item->id) {{-- Error message untuk elemen array spesifik --}}
+                                    @error('penilaians.' . $item->id)
+                                        {{-- Error message untuk elemen array spesifik --}}
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
                                 </div>
