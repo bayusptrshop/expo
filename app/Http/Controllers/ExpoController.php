@@ -50,21 +50,21 @@ class ExpoController extends Controller
         return redirect()->back()->with('success', 'Absensi berhasil');
     }
 
-   public function sertifikat(Request $request, $hash = null)
-{
-    if ($hash) {
-        $peserta = Peserta::where('qr_hash', $hash)->first();
-        if (!$peserta)
-            return redirect()->back()->with('error', 'QR tidak valid');
-    } else {
-        $peserta = Peserta::where('nim', $request->input('nim'))->first();
-        if (!$peserta)
-            return redirect()->back()->with('error', 'NIM tidak valid');
-    }
+    public function sertifikat(Request $request, $hash = null)
+    {
+        if ($hash) {
+            $peserta = Peserta::where('qr_hash', $hash)->first();
+            if (!$peserta)
+                return redirect()->back()->with('error', 'QR tidak valid');
+        } else {
+            $peserta = Peserta::where('nim', $request->input('nim'))->first();
+            if (!$peserta)
+                return redirect()->back()->with('error', 'NIM tidak valid');
+        }
 
-    // Langsung return view sertifikat tanpa validasi
-    return view('sertifikat', compact('peserta'));
-}
+        // Langsung return view sertifikat tanpa validasi
+        return view('sertifikat', compact('peserta'));
+    }
     public function home()
     {
         $pesertas = Peserta::all();
@@ -298,35 +298,96 @@ class ExpoController extends Controller
                 ->with('error', 'Error: ' . $e->getMessage());
         }
     }
-    
-    public function verifySertifikat(Request $request, $id = null)
-{
-    if (!$id) {
-        return redirect()->back()->with('error', 'Hash tidak valid');
-    }
 
-    $peserta = Peserta::where('id', $id)->first();
-    
-    if (!$peserta) {
+    public function verifySertifikat(Request $request, $id = null)
+    {
+        if (!$id) {
+            return redirect()->back()->with('error', 'Hash tidak valid');
+        }
+
+        $peserta = Peserta::where('id', $id)->first();
+
+        if (!$peserta) {
+            return view('verify_sertifikat', [
+                'valid' => false,
+                'message' => 'Sertifikat tidak valid - Peserta tidak ditemukan'
+            ]);
+        }
+
+        $absen = Absen::where('peserta_id', $peserta->id)->first();
+        $jumlahKontestan = Kontestan::count();
+        $jumlahNilaiPeserta = Penilaian::where('peserta_id', $peserta->id)->count();
+
+        $isEligible = ($jumlahKontestan == $jumlahNilaiPeserta && $absen && $absen->masuk && $absen->pulang);
+
         return view('verify_sertifikat', [
-            'valid' => false,
-            'message' => 'Sertifikat tidak valid - Peserta tidak ditemukan'
+            'valid' => $isEligible,
+            'peserta' => $peserta,
+            'message' => $isEligible
+                ? 'Sertifikat ini valid dan resmi'
+                : 'Sertifikat tidak memenuhi syarat kelengkapan'
         ]);
     }
 
-    $absen = Absen::where('peserta_id', $peserta->id)->first();
-    $jumlahKontestan = Kontestan::count();
-    $jumlahNilaiPeserta = Penilaian::where('peserta_id', $peserta->id)->count();
+    public function verifySertifikatJuri(Request $request, $juriId = null)
+    {
+        if (!$juriId) {
+            return view('verify_sertifikat_juri', [
+                'valid' => false,
+                'message' => 'ID Juri tidak valid',
+                'juri_info' => null
+            ]);
+        }
 
-    $isEligible = ($jumlahKontestan == $jumlahNilaiPeserta && $absen && $absen->masuk && $absen->pulang);
+        // Daftar 3 juri berdasarkan ID
+        $juriData = $this->getJuriById($juriId);
 
-    return view('verify_sertifikat', [
-        'valid' => $isEligible,
-        'peserta' => $peserta,
-        'message' => $isEligible 
-            ? 'Sertifikat ini valid dan resmi' 
-            : 'Sertifikat tidak memenuhi syarat kelengkapan'
-    ]);
-}
+        if (!$juriData) {
+            return view('verify_sertifikat_juri', [
+                'valid' => false,
+                'message' => 'Juri tidak ditemukan dalam sistem',
+                'juri_info' => null
+            ]);
+        }
+
+        return view('verify_sertifikat_juri', [
+            'valid' => true,
+            'message' => 'Verifikasi berhasil',
+            'juri_info' => $juriData,
+            'scan_time' => now()->format('d F Y, H:i:s')
+        ]);
+    }
+
+    private function getJuriById($juriId)
+    {
+        // Daftar 3 juri
+        $juris = [
+            '1' => [
+                'nama' => 'Hasan, M.Kom.',
+                'jabatan' => 'Software Engineer di Juke Solusi Teknologi  dan Dosen di Sony Sugema College of Informatika'
+            ],
+            '2' => [
+                'nama' => 'Rakha Rizaldi Bachtiar, S.T',
+                'jabatan' => 'Facility Lead di Shopee Express sebagai Juri kedua'
+            ],
+            '3' => [
+                'nama' => 'Abdul Sidik, S.Kom., CCNP, CEH ',
+                'jabatan' => 'Mahasiswa Magister Teknologi Informasi di UI '
+            ]
+        ];
+
+        return isset($juris[$juriId]) ? $juris[$juriId] : null;
+    }
+
+    public function daftarJuri()
+    {
+        $juris = [
+            ['id' => '1', 'nama' => 'Dr. Hasan, M.Kom.', 'bidang' => 'Sistem Informasi'],
+            ['id' => '2', 'nama' => 'Dr. Siti Nurhaliza, M.Kom.', 'bidang' => 'Teknik Informatika'],
+            ['id' => '3', 'nama' => 'Prof. Dr. Budi Santoso, M.T.', 'bidang' => 'Dekan FTI']
+        ];
+
+        return view('daftar_juri', compact('juris'));
+    }
 
 }

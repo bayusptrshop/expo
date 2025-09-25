@@ -23,6 +23,9 @@ Route::post('/absen', [ExpoController::class, 'absen']);
 Route::get('/sertifikat/{hash}', [ExpoController::class, 'sertifikat'])->name('sertifikat');
 // Route untuk verifikasi sertifikat
 Route::get('/verify-sertifikat/{id}', [ExpoController::class, 'verifySertifikat'])->name('sertifikat.verify');
+// Route untuk verifikasi juri langsung berdasarkan ID
+Route::get('/verify-juri/{juriId}', [ExpoController::class, 'verifySertifikatJuri'])->name('juri.verify');
+Route::get('/daftar-juri', [ExpoController::class, 'daftarJuri'])->name('juri.daftar');
 Route::get('/admin', [ExpoController::class, 'admin']);
 Route::get('/generateqrcode/{pesertaId}', [ExpoController::class, 'generateQRCode']);
 Route::get('/sertifikat-saya', [ExpoController::class, 'sertifikatView']);

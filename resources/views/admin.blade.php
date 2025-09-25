@@ -9,14 +9,17 @@
                         <i class="bi bi-speedometer2 me-2"></i>Dashboard Admin
                         <span class="badge bg-primary-subtle text-primary ms-2 fs-6">Peserta Expo</span>
                     </h2>
-                    {{-- <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary">
-                        <i class="bi bi-file-earmark-excel me-1"></i> Export
-                    </button>
-                    <button class="btn btn-primary">
-                        <i class="bi bi-plus-circle me-1"></i> Tambah Peserta
-                    </button>
-                </div> --}}
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('juri.daftar') }}" class="btn btn-outline-success">
+                            <i class="bi bi-award me-1"></i> Daftar Juri
+                        </a>
+                        {{-- <button class="btn btn-outline-primary">
+                            <i class="bi bi-file-earmark-excel me-1"></i> Export
+                        </button>
+                        <button class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i> Tambah Peserta
+                        </button> --}}
+                    </div>
                 </div>
             </div>
         </div>

@@ -22,7 +22,7 @@ class GoogleSheetsService
         $this->client->setAccessType('offline');
 
         $this->service = new Sheets($this->client);
-        $this->spreadsheetId = '1DJ55pfX13929wE37CuEGs9zfY7RsnbM6blAoXQvmRZY';
+        $this->spreadsheetId = env('GOOGLE_SHEETS_ID'); // ID spreadsheet dari .env
         $this->range = 'Form Responses 1!A2:G'; // Sesuaikan dengan range data Anda
     }
 

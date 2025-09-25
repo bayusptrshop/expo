@@ -11,8 +11,23 @@
                             <div class="scanner-icon">
                                 <i class="bi bi-qr-code-scan"></i>
                             </div>
-                            <h2 class="scanner-title">Scan QR Code Peserta</h2>
-                            <p class="scanner-subtitle">Arahkan kamera ke QR code peserta untuk melakukan absensi</p>
+                            <h2 class="scanner-title">Scan QR Code</h2>
+                            <p class="scanner-subtitle">Pilih mode scan yang diinginkan</p>
+                            
+                            <!-- Mode Selection -->
+                            <div class="mode-selection mb-4">
+                                <div class="btn-group w-100" role="group">
+                                    <input type="radio" class="btn-check" name="scanMode" id="modeAbsen" value="absen" checked>
+                                    <label class="btn btn-outline-primary" for="modeAbsen">
+                                        <i class="bi bi-person-check me-2"></i>Absensi Peserta
+                                    </label>
+                                    
+                                    <input type="radio" class="btn-check" name="scanMode" id="modeJuri" value="juri">
+                                    <label class="btn btn-outline-success" for="modeJuri">
+                                        <i class="bi bi-award me-2"></i>Verifikasi Juri
+                                    </label>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Scanner body -->
@@ -97,10 +112,11 @@
                         </div>
                         <div class="help-content">
                             <ul class="help-list">
+                                <li><strong>Mode Absensi:</strong> Scan QR code peserta untuk melakukan absensi masuk/pulang</li>
+                                <li><strong>Mode Verifikasi Juri:</strong> Scan QR code peserta untuk verifikasi informasi juri</li>
                                 <li>Pastikan QR code terlihat jelas dan tidak rusak</li>
                                 <li>Posisikan QR code di tengah area pemindaian</li>
                                 <li>Pastikan pencahayaan cukup terang</li>
-                                {{-- <li>Jika gagal, coba masukkan kode QR secara manual</li> --}}
                             </ul>
                         </div>
                     </div>
@@ -130,6 +146,31 @@
             --gray-light: #e9ecef;
             --border-radius: 16px;
             --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .mode-selection {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .mode-selection .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+        }
+
+        .mode-selection .btn-check:checked + .btn-outline-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .mode-selection .btn-check:checked + .btn-outline-success {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: white;
         }
 
         .qr-scanner-container {
@@ -612,10 +653,19 @@
                         qrCodeConfig,
                         (decodedText) => {
                             if (lastScannedQrHash !== decodedText) {
-                                // Jika berbeda, lanjutkan proses
-                                document.getElementById('qr_hash').value = decodedText; // Update nilai input
-                                saveToDatabase(); // Panggil fungsi untuk menyimpan ke database
-                                lastScannedQrHash = decodedText; // Update lastScannedQrHash setelah berhasil disimpan
+                                // Get selected mode
+                                const selectedMode = document.querySelector('input[name="scanMode"]:checked').value;
+                                
+                                if (selectedMode === 'absen') {
+                                    // Mode absensi - simpan ke database
+                                    document.getElementById('qr_hash').value = decodedText;
+                                    saveToDatabase();
+                                } else if (selectedMode === 'juri') {
+                                    // Mode verifikasi juri - redirect ke halaman verifikasi
+                                    window.location.href = '/verify-juri/' + decodedText;
+                                }
+                                
+                                lastScannedQrHash = decodedText;
                             }
 
                             // Reset the scanning overlay for the next scan

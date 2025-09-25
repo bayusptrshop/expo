@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechnoVision 2025: Innovation Beyond Code - Certificate</title>
+    <title>TechnoVision 2025:- Certificate {{ $peserta->name }}</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -266,7 +266,7 @@
         .certificate-seal {
             position: absolute;
             bottom: 10px;
-            right: 20px;
+            right: 10px;
             width: 120px;
             height: 120px;
             display: flex;
@@ -475,6 +475,10 @@
             border-radius: 50%;
         }
 
+        .study {
+            display: block;
+        }
+
         .tech-decoration-2 {
             bottom: 15%;
             right: 8%;
@@ -669,7 +673,7 @@
 
                 <div class="tech-icon-container">
                     <div class="tech-icon">
-                        <img src="{{ asset('logo-dikti.png') }}" alt="tes">
+                        <img src="{{ asset('img/logo-dikti.png') }}" alt="">
                     </div>
                     <div class="tech-icon">
                         <img src="{{ asset('img/logo-ubp.png') }}" alt="">
@@ -678,7 +682,7 @@
                         <img src="{{ asset('img/logo-expo.jpg') }}" alt="">
                     </div>
                     <div class="tech-icon">
-                        <img src="{{ asset('logo-fik.png') }}" alt="">
+                        <img src="{{ asset('img/logo-fik.png') }}" alt="">
                     </div>
                 </div>
             </div>
@@ -689,7 +693,11 @@
                     <h3 class="certificate-recipient">{{ $peserta->nama }}</h3>
                 </div>
                 <p class="certificate-text">
-                    has successfully contributed as an evaluator in the TechnoVision 2025 Expo, organized by the Faculty of <b>Computer Science</b> at <b>Universitas Buana Perjuangan Karawang</b>, held on <b>Saturday, July 26, 2025.</b> Their participation in assessing the contestants demonstrated a strong commitment to academic excellence and the advancement of innovation in the field of emerging technologies.
+                    Has successfully contributed as an evaluator in the TechnoVision 2025 Expo, organized by the Faculty
+                    of <b>Computer Science</b> at <b>Universitas Buana Perjuangan Karawang</b>, held on <b>Saturday,
+                        July 26, 2025.</b> Their participation in assessing the contestants demonstrated a strong
+                    commitment to academic excellence and the advancement of innovation in the field of emerging
+                    technologies.
                 </p>
             </div>
             <div class="certificate-footer">
@@ -697,23 +705,24 @@
                     <div id="qrcode-dekan" class="d-flex justify-content-center mb-2"></div>
                     <div class="signature">Dr. Ahmad Fauzi, M.Kom</div>
                     <div class="signature-line"></div>
-                    <div class="signature-title">Dekan Fakultas Ilmu Komputer</div>
+                    <div class="signature-title">Dean of the Faculty of Computer Science</div>
                 </div>
                 <div class="signature-container">
                     <div id="qrcode-kaprodi-if" class="d-flex justify-content-center mb-2"></div>
                     <div class="signature">Jamaludin Indra M.Kom</div>
                     <div class="signature-line"></div>
-                    <div class="signature-title">Kaprodi Teknik Informatika</div>
+                    <div class="signature-title">Head of Informatics Engineering <span class="study">Study Program</span></div>
                 </div>
                 <div class="signature-container">
                     <div id="qrcode-kaprodi-si" class="d-flex justify-content-center mb-2"></div>
                     <div class="signature">Tukino, MMSI</div>
                     <div class="signature-line"></div>
-                    <div class="signature-title">Kaprodi Sistem Informasi</div>
+                    <div class="signature-title">Head of Information Systems <span class="study">Study Program</span>
+                    </div>
                 </div>
             </div>
 
-            {{-- <div class="certificate-date">
+            {{-- <div class="certificate-date">z
                 <div class="date-text">JULY 26, 2025</div>
                 <div class="location-text">KARAWANG, INDONESIA</div>
             </div> --}}
@@ -728,7 +737,7 @@
                     </div>
                 </div>
             </div>
-            {{-- <div class="certificate-id">CERT ID: TV2025-8675309</div> --}}
+            <div class="certificate-id">CERT ID: FIKEXPOUBP-20250726-214700-{{ $peserta->id }}</div>
         </div>
     </div>
 
@@ -836,7 +845,7 @@
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const pesertaId = "{{ url('/verify-sertifikat/' . $peserta->id) }}";
+            const pesertaId = "https://technovision2025.sitektif.com/verify-sertifikat/{{ $peserta->id }}";
 
             new QRCode(document.getElementById("qrcode-dekan"), {
                 text: pesertaId,

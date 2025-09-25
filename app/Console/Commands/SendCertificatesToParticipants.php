@@ -6,40 +6,58 @@ use Illuminate\Console\Command;
 use App\Models\Peserta;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CertificateEmail;
-use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\PDF as DomPDF; // Gunakan class langsung
 
 class SendCertificatesToParticipants extends Command
 {
     protected $signature = 'certificates:send';
-    protected $description = 'Send certificates to all participants';
+    protected $description = 'Send certificates to all participants with Google Drive links';
+
+    // Base Google Drive folder URL
+    private $driveBaseUrl = 'https://drive.google.com/drive/folders/1nsGyxsykRQrvX0H_daa_s0sCgatBJEbB?usp=sharing';
 
     public function handle()
     {
-        Storage::makeDirectory('temp/certificates');
-
         $participants = Peserta::all();
+        $sentCount = 0;
+        $failedCount = 0;
+        $failedEmails = [];
 
         foreach ($participants as $participant) {
             try {
-                // Gunakan app() untuk resolve DomPDF
-                $pdf = app(DomPDF::class);
-                $pdf->loadView('sertifikat', ['peserta' => $participant])
-    ->setPaper('A4', 'landscape');
-
-
-                $filename = 'sertifikat_'.$participant->nim.'.pdf';
-                $path = storage_path('app/temp/certificates/'.$filename);
-                $pdf->save($path);
+                // Generate the Google Drive link (assuming files are named consistently)
+                $certificateUrl = $this->generateCertificateUrl($participant);
 
                 Mail::to($participant->email)
-                    ->send(new CertificateEmail($participant, $path));
+                    ->send(new CertificateEmail($participant, $certificateUrl));
 
-                unlink($path);
+                $this->info("Certificate sent successfully to: {$participant->email}");
+                $sentCount++;
 
             } catch (\Exception $e) {
-                $this->error("Gagal mengirim ke {$participant->email}: ".$e->getMessage());
+                $this->error("Failed to send to {$participant->email}: " . $e->getMessage());
+                $failedCount++;
+                $failedEmails[] = $participant->email;
             }
         }
+
+        // Display summary
+        $this->line("\n=== Email Sending Summary ===");
+        $this->info("Successfully sent: {$sentCount} emails");
+        $this->error("Failed to send: {$failedCount} emails");
+
+        if ($failedCount > 0) {
+            $this->line("\nFailed emails:");
+            foreach ($failedEmails as $email) {
+                $this->line("- {$email}");
+            }
+        }
+    }
+
+    /**
+     * Generate Google Drive URL for participant's certificate
+     */
+    private function generateCertificateUrl($participant)
+    {
+        return $this->driveBaseUrl;
     }
 }

@@ -11,23 +11,17 @@ class CertificateEmail extends Mailable
     use Queueable, SerializesModels;
 
     public $participant;
-    public $pdfPath;
+    public $certificateUrl;
 
-    public function __construct($participant, $pdfPath)
+    public function __construct($participant, $certificateUrl)
     {
         $this->participant = $participant;
-        $this->pdfPath = $pdfPath;
+        $this->certificateUrl = $certificateUrl;
     }
 
     public function build()
     {
-        $namaFile = 'Sertifikat_TechnoVision2025_'.$this->participant->nim.'.pdf';
-
         return $this->subject('[SERTIFIKAT] TechnoVision 2025 - '.$this->participant->nama)
-            ->view('emails.certificate_notification') // Template email notifikasi
-            ->attach($this->pdfPath, [
-                'as' => $namaFile,
-                'mime' => 'application/pdf',
-            ]);
+            ->view('emails.certificate_notification'); // Template email notifikasi
     }
 }
